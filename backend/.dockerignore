@@ -1,0 +1,57 @@
+# Ignorar arquivos desnecessários no build do Docker
+# Isso reduz o tamanho do contexto de build e melhora a performance
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+.dockerignore
+docker-compose*.yml
+compose*.yaml
+Dockerfile*
+
+# IDEs
+.idea
+.vscode
+.fleet
+.zed
+.phpactor.json
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Laravel
+/vendor/
+/storage/*.key
+/storage/pail
+.env
+.env.*
+.phpunit.result.cache
+/.phpunit.cache
+Homestead.json
+Homestead.yaml
+auth.json
+
+# Build artifacts
+/public/hot
+/public/build
+/public/storage
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Documentation (não precisa no container)
+README.md
+DOCKER-README.md
+*.md
