@@ -32,7 +32,6 @@ class SellerResourceTest extends TestCase
 
         $array = $resource->toArray($request);
 
-        // Valida estrutura: deve ter exatamente 5 campos
         $this->assertCount(5, $array);
         $expectedKeys = ['id', 'name', 'email', 'created_at', 'updated_at'];
         $this->assertEquals($expectedKeys, array_keys($array));

@@ -29,8 +29,8 @@ class SellerControllerTest extends TestCase
     public function test_endpoint_returns_sellers_with_correct_structure_and_data(): void
     {
         Seller::factory()->create([
-            'name' => 'João Silva',
-            'email' => 'joao@example.com',
+            'name' => 'Eduardo Garbin',
+            'email' => 'eduardo@example.com',
         ]);
 
         $response = $this->actingAsUser()->getJson('/api/sellers');
@@ -48,8 +48,8 @@ class SellerControllerTest extends TestCase
                 ],
             ])
             ->assertJsonFragment([
-                'name' => 'João Silva',
-                'email' => 'joao@example.com',
+                'name' => 'Eduardo Garbin',
+                'email' => 'eduardo@example.com',
             ]);
     }
 
@@ -79,8 +79,8 @@ class SellerControllerTest extends TestCase
     public function test_creates_seller_successfully(): void
     {
         $data = [
-            'name' => 'João Silva',
-            'email' => 'joao@example.com',
+            'name' => 'Eduardo Garbin',
+            'email' => 'eduardo@example.com',
         ];
 
         $response = $this->actingAsUser()->postJson('/api/sellers', $data);
@@ -96,13 +96,13 @@ class SellerControllerTest extends TestCase
                 ],
             ])
             ->assertJsonFragment([
-                'name' => 'João Silva',
-                'email' => 'joao@example.com',
+                'name' => 'Eduardo Garbin',
+                'email' => 'eduardo@example.com',
             ]);
 
         $this->assertDatabaseHas('sellers', [
-            'name' => 'João Silva',
-            'email' => 'joao@example.com',
+            'name' => 'Eduardo Garbin',
+            'email' => 'eduardo@example.com',
         ]);
     }
 
@@ -112,7 +112,7 @@ class SellerControllerTest extends TestCase
     public function test_create_seller_requires_name(): void
     {
         $response = $this->actingAsUser()->postJson('/api/sellers', [
-            'email' => 'joao@example.com',
+            'email' => 'eduardo@example.com',
         ]);
 
         $response->assertStatus(422)
@@ -125,7 +125,7 @@ class SellerControllerTest extends TestCase
     public function test_create_seller_requires_email(): void
     {
         $response = $this->actingAsUser()->postJson('/api/sellers', [
-            'name' => 'João Silva',
+            'name' => 'Eduardo Garbin',
         ]);
 
         $response->assertStatus(422)
@@ -138,7 +138,7 @@ class SellerControllerTest extends TestCase
     public function test_create_seller_requires_valid_email(): void
     {
         $response = $this->actingAsUser()->postJson('/api/sellers', [
-            'name' => 'João Silva',
+            'name' => 'Eduardo Garbin',
             'email' => 'email-invalido',
         ]);
 
@@ -151,11 +151,11 @@ class SellerControllerTest extends TestCase
      */
     public function test_create_seller_requires_unique_email(): void
     {
-        Seller::factory()->create(['email' => 'joao@example.com']);
+        Seller::factory()->create(['email' => 'eduardo@example.com']);
 
         $response = $this->actingAsUser()->postJson('/api/sellers', [
-            'name' => 'Outro João',
-            'email' => 'joao@example.com',
+            'name' => 'Outro Eduardo',
+            'email' => 'eduardo@example.com',
         ]);
 
         $response->assertStatus(422)

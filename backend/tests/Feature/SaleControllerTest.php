@@ -23,7 +23,7 @@ class SaleControllerTest extends TestCase
      */
     public function test_endpoint_returns_sales_with_correct_structure_and_data(): void
     {
-        $seller = Seller::factory()->create(['name' => 'João Silva']);
+        $seller = Seller::factory()->create(['name' => 'Eduardo Garbin']);
 
         Sale::factory()->create([
             'seller_id' => $seller->id,
@@ -98,11 +98,12 @@ class SaleControllerTest extends TestCase
                 'sale_date' => '2025-10-14',
             ]);
 
-        $this->assertDatabaseHas('sales', [
-            'seller_id' => $seller->id,
-            'amount' => 1500.00,
-            'sale_date' => '2025-10-14',
-        ]);
+        $this->assertDatabaseCount('sales', 1);
+
+        $sale = Sale::first();
+        $this->assertEquals($seller->id, $sale->seller_id);
+        $this->assertEquals(1500.00, $sale->amount);
+        $this->assertEquals('2025-10-14', $sale->sale_date->format('Y-m-d'));
     }
 
     /**

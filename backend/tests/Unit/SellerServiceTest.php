@@ -75,21 +75,21 @@ class SellerServiceTest extends TestCase
     public function test_create_seller_stores_seller_in_database(): void
     {
         $data = [
-            'name' => 'João Silva',
-            'email' => 'joao@example.com',
+            'name' => 'Eduardo Garbin',
+            'email' => 'eduardo@example.com',
         ];
 
         $seller = $this->sellerService->createSeller($data);
 
         $this->assertInstanceOf(Seller::class, $seller);
-        $this->assertEquals('João Silva', $seller->name);
-        $this->assertEquals('joao@example.com', $seller->email);
+        $this->assertEquals('Eduardo Garbin', $seller->name);
+        $this->assertEquals('eduardo@example.com', $seller->email);
         $this->assertNotNull($seller->id);
 
         // Verifica se está no banco
         $this->assertDatabaseHas('sellers', [
-            'name' => 'João Silva',
-            'email' => 'joao@example.com',
+            'name' => 'Eduardo Garbin',
+            'email' => 'eduardo@example.com',
         ]);
     }
 

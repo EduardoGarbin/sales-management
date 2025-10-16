@@ -19,7 +19,7 @@ class SaleFactory extends Factory
         return [
             'seller_id' => \App\Models\Seller::inRandomOrder()->first()->id,
             'amount' => fake()->randomFloat(2, 10, 10000),
-            'sale_date' => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
+            'sale_date' => fake()->dateTimeBetween('-1 week', 'now')->format('Y-m-d'),
         ];
     }
 }
