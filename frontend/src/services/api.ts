@@ -92,6 +92,11 @@ class ApiService {
         const response = await this.api.get<ApiResponse<Sale[]>>(`/sellers/${sellerId}/sales`)
         return response.data
     }
+
+    async resendCommissionEmail(sellerId: number, date: string): Promise<ApiResponse<any>> {
+        const response = await this.api.post<ApiResponse<any>>(`/sellers/${sellerId}/resend-commission-email`, { date })
+        return response.data
+    }
 }
 
 export default new ApiService()
