@@ -151,6 +151,19 @@ queue-retry: ## Tentar reprocessar job falhado (ex: make queue-retry id="1")
 queue-flush: ## Limpar todos os jobs falhados
 	docker exec laravel-workspace php artisan queue:flush
 
+# Relatórios
+send-daily-reports: ## Enviar relatórios diários de vendas (usa data de ontem por padrão)
+	docker exec laravel-workspace php artisan sales:send-daily-reports
+
+send-reports-date: ## Enviar relatórios para data específica (ex: make send-reports-date date="2025-10-15")
+	docker exec laravel-workspace php artisan sales:send-daily-reports --date=$(date)
+
+schedule-work: ## Executar o scheduler do Laravel (cron)
+	docker exec laravel-workspace php artisan schedule:work
+
+schedule-run: ## Executar tarefas agendadas uma vez
+	docker exec laravel-workspace php artisan schedule:run
+
 # Testes
 test: ## Executar todos os testes PHPUnit
 	@docker exec laravel-workspace bash -c "export APP_ENV=testing && export DB_CONNECTION=sqlite && export DB_DATABASE=:memory: && php artisan test"
