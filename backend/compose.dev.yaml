@@ -85,7 +85,17 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p$$MYSQL_ROOT_PASSWORD",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -107,6 +117,16 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
+    networks:
+      - laravel-network
+
+  # Mailpit - Servidor de e-mail para testes
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: laravel-mailpit
+    ports:
+      - "8025:8025" # Interface web
+      - "1025:1025" # SMTP server
     networks:
       - laravel-network
 

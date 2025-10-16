@@ -35,7 +35,6 @@ class SaleService
      */
     public function createSale(array $data): Sale
     {
-        // Valida se o vendedor existe
         Seller::findOrFail($data['seller_id']);
 
         $sale = Sale::create([

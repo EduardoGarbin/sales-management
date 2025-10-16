@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Vendedores
     Route::get('/sellers', [SellerController::class, 'index']);
     Route::post('/sellers', [SellerController::class, 'store']);
+    Route::post('/sellers/{id}/resend-commission-email', [SellerController::class, 'resendCommissionEmail']);
 
     // Vendas
     Route::get('/sales', [SaleController::class, 'index']);

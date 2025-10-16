@@ -100,6 +100,15 @@ make-service: ## Criar service (arquivo manual) (ex: make make-service name="Sel
 	@echo "<?php\n\nnamespace App\Services;\n\nclass $(name)\n{\n    //\n}" > app/Services/$(name).php
 	@echo "Service $(name) criado em app/Services/$(name).php"
 
+make-mail: ## Criar mailable (ex: make make-mail name="WelcomeEmail")
+	docker exec laravel-workspace php artisan make:mail $(name)
+
+make-job: ## Criar job (ex: make make-job name="SendEmail")
+	docker exec laravel-workspace php artisan make:job $(name)
+
+make-command: ## Criar command (ex: make make-command name="SendDailyReports")
+	docker exec laravel-workspace php artisan make:command $(name)
+
 # Comandos Composer
 composer: ## Executar comando Composer (ex: make composer cmd="require vendor/package")
 	docker exec laravel-workspace composer $(cmd)
@@ -123,15 +132,34 @@ npm-dev: ## Executar NPM dev
 npm-build: ## Build de produção do frontend
 	docker exec laravel-workspace npm run build
 
+# Queue
+queue-work: ## Processar jobs da fila
+	docker exec laravel-workspace php artisan queue:work
+
+queue-listen: ## Escutar fila (auto-reload)
+	docker exec laravel-workspace php artisan queue:listen
+
+queue-restart: ## Reiniciar workers da fila
+	docker exec laravel-workspace php artisan queue:restart
+
+queue-failed: ## Listar jobs que falharam
+	docker exec laravel-workspace php artisan queue:failed
+
+queue-retry: ## Tentar reprocessar job falhado (ex: make queue-retry id="1")
+	docker exec laravel-workspace php artisan queue:retry $(id)
+
+queue-flush: ## Limpar todos os jobs falhados
+	docker exec laravel-workspace php artisan queue:flush
+
 # Testes
 test: ## Executar todos os testes PHPUnit
-	docker exec laravel-workspace php artisan test
+	@docker exec laravel-workspace bash -c "export APP_ENV=testing && export DB_CONNECTION=sqlite && export DB_DATABASE=:memory: && php artisan test"
 
 test-unit: ## Executar apenas testes unitários
-	docker exec laravel-workspace php artisan test --testsuite=Unit
+	@docker exec laravel-workspace bash -c "export APP_ENV=testing && export DB_CONNECTION=sqlite && export DB_DATABASE=:memory: && php artisan test --testsuite=Unit"
 
 test-feature: ## Executar apenas testes de feature
-	docker exec laravel-workspace php artisan test --testsuite=Feature
+	@docker exec laravel-workspace bash -c "export APP_ENV=testing && export DB_CONNECTION=sqlite && export DB_DATABASE=:memory: && php artisan test --testsuite=Feature"
 
 # Limpeza e manutenção
 clean: ## Parar containers e remover volumes
@@ -147,8 +175,24 @@ fix-permissions: ## Corrigir permissões dos arquivos
 	docker run --rm -v $(PWD):/app -w /app alpine:latest chown -R $(shell id -u):$(shell id -g) .
 
 # Setup inicial
-setup: build up composer-install npm-install ## Setup completo do projeto
+setup: build up ## Setup completo do projeto
+	@echo "Instalando dependências..."
+	@$(MAKE) composer-install
+	@$(MAKE) npm-install
+	@echo "Configurando ambiente..."
+	@if [ ! -f .env ]; then \
+		echo "Criando arquivo .env..."; \
+		cp .env.example .env; \
+	else \
+		echo "Arquivo .env já existe, pulando..."; \
+	fi
+	@echo "Gerando chave da aplicação..."
+	@docker exec laravel-workspace php artisan key:generate
+	@echo "Executando migrations e seeders..."
+	@$(MAKE) migrate-seed
+	@echo ""
 	@echo "Projeto configurado com sucesso!"
 	@echo "Acesse: http://localhost:8080"
+	@echo ""
 
 fresh: clean setup migrate-seed ## Setup completo com banco de dados zerado
