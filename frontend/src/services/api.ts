@@ -9,7 +9,8 @@ import type {
     SellerRequest,
     SaleRequest,
     ApiResponse,
-    ApiError
+    ApiError,
+    PaginatedResponse
 } from '@/types'
 
 class ApiService {
@@ -67,8 +68,10 @@ class ApiService {
     }
 
     // Sellers endpoints
-    async getSellers(): Promise<ApiResponse<Seller[]>> {
-        const response = await this.api.get<ApiResponse<Seller[]>>('/sellers')
+    async getSellers(page: number = 1, perPage: number = 15): Promise<PaginatedResponse<Seller>> {
+        const response = await this.api.get<PaginatedResponse<Seller>>('/sellers', {
+            params: { page, per_page: perPage }
+        })
         return response.data
     }
 
@@ -78,8 +81,10 @@ class ApiService {
     }
 
     // Sales endpoints
-    async getSales(): Promise<ApiResponse<Sale[]>> {
-        const response = await this.api.get<ApiResponse<Sale[]>>('/sales')
+    async getSales(page: number = 1, perPage: number = 15): Promise<PaginatedResponse<Sale>> {
+        const response = await this.api.get<PaginatedResponse<Sale>>('/sales', {
+            params: { page, per_page: perPage }
+        })
         return response.data
     }
 
@@ -88,8 +93,10 @@ class ApiService {
         return response.data
     }
 
-    async getSalesBySeller(sellerId: number): Promise<ApiResponse<Sale[]>> {
-        const response = await this.api.get<ApiResponse<Sale[]>>(`/sellers/${sellerId}/sales`)
+    async getSalesBySeller(sellerId: number, page: number = 1, perPage: number = 15): Promise<PaginatedResponse<Sale>> {
+        const response = await this.api.get<PaginatedResponse<Sale>>(`/sellers/${sellerId}/sales`, {
+            params: { page, per_page: perPage }
+        })
         return response.data
     }
 

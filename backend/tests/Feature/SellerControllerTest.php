@@ -18,11 +18,11 @@ class SellerControllerTest extends TestCase
     }
 
     /**
-     * Testa se o endpoint GET /api/sellers retorna a estrutura JSON correta.
+     * Testa se o endpoint GET /api/sellers retorna a estrutura JSON correta com paginação.
      *
      * Este teste valida o contrato da API (integração completa):
      * - Status HTTP 200
-     * - Estrutura do envelope "data"
+     * - Estrutura do envelope "data" com paginação
      * - Campos retornados por vendedor
      * - Valores corretos
      */
@@ -45,6 +45,20 @@ class SellerControllerTest extends TestCase
                         'created_at',
                         'updated_at',
                     ],
+                ],
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next',
+                ],
+                'meta' => [
+                    'current_page',
+                    'from',
+                    'last_page',
+                    'per_page',
+                    'to',
+                    'total',
                 ],
             ])
             ->assertJsonFragment([

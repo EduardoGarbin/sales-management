@@ -19,7 +19,7 @@ class SaleControllerTest extends TestCase
     }
 
     /**
-     * Testa se o endpoint GET /api/sales retorna a estrutura JSON correta.
+     * Testa se o endpoint GET /api/sales retorna a estrutura JSON correta com paginação.
      */
     public function test_endpoint_returns_sales_with_correct_structure_and_data(): void
     {
@@ -45,6 +45,20 @@ class SaleControllerTest extends TestCase
                         'created_at',
                         'updated_at',
                     ],
+                ],
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next',
+                ],
+                'meta' => [
+                    'current_page',
+                    'from',
+                    'last_page',
+                    'per_page',
+                    'to',
+                    'total',
                 ],
             ])
             ->assertJsonFragment([
@@ -203,7 +217,7 @@ class SaleControllerTest extends TestCase
     }
 
     /**
-     * Testa endpoint de vendas por vendedor - integração da API.
+     * Testa endpoint de vendas por vendedor - integração da API com paginação.
      *
      * Valida que o endpoint retorna a estrutura correta e status HTTP adequado.
      * A lógica de filtro já está testada no SaleServiceTest (teste unitário).
@@ -228,6 +242,20 @@ class SaleControllerTest extends TestCase
                         'created_at',
                         'updated_at',
                     ],
+                ],
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next',
+                ],
+                'meta' => [
+                    'current_page',
+                    'from',
+                    'last_page',
+                    'per_page',
+                    'to',
+                    'total',
                 ],
             ])
             ->assertJsonCount(2, 'data');

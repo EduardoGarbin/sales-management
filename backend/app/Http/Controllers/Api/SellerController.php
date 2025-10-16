@@ -11,6 +11,7 @@ use App\Models\Seller;
 use App\Services\SellerService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class SellerController extends Controller
@@ -26,13 +27,20 @@ class SellerController extends Controller
     }
 
     /**
-     * Lista todos os vendedores ativos.
+     * Lista todos os vendedores ativos com paginação.
      *
+     * Aceita os parâmetros 'page' e 'per_page' via query string.
+     * Os dados são armazenados em cache por página para melhor performance.
+     *
+     * @param Request $request
      * @return AnonymousResourceCollection
      */
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $sellers = $this->sellerService->getAllSellers();
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 15);
+
+        $sellers = $this->sellerService->getAllSellers($page, $perPage);
         return SellerResource::collection($sellers);
     }
 

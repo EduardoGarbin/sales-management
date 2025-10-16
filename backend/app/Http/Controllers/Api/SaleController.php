@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSaleRequest;
 use App\Http\Resources\SaleResource;
 use App\Services\SaleService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class SaleController extends Controller
@@ -22,16 +23,19 @@ class SaleController extends Controller
     }
 
     /**
-     * Lista todas as vendas.
+     * Lista todas as vendas com paginação.
      *
      * Retorna todas as vendas ordenadas do mais recente para o mais antigo,
      * incluindo os dados do vendedor e a comissão calculada automaticamente.
+     * Aceita o parâmetro 'per_page' via query string (padrão: 15).
      *
+     * @param Request $request
      * @return AnonymousResourceCollection
      */
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $sales = $this->saleService->getAllSales();
+        $perPage = $request->query('per_page', 15);
+        $sales = $this->saleService->getAllSales($perPage);
         return SaleResource::collection($sales);
     }
 
@@ -54,14 +58,16 @@ class SaleController extends Controller
     }
 
     /**
-     * Lista vendas de um vendedor específico.
+     * Lista vendas de um vendedor específico com paginação.
      *
+     * @param Request $request
      * @param int $sellerId
      * @return AnonymousResourceCollection
      */
-    public function salesBySeller(int $sellerId): AnonymousResourceCollection
+    public function salesBySeller(Request $request, int $sellerId): AnonymousResourceCollection
     {
-        $sales = $this->saleService->getSalesBySeller($sellerId);
+        $perPage = $request->query('per_page', 15);
+        $sales = $this->saleService->getSalesBySeller($sellerId, $perPage);
         return SaleResource::collection($sales);
     }
 }

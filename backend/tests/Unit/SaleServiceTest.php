@@ -21,7 +21,7 @@ class SaleServiceTest extends TestCase
     }
 
     /**
-     * Testa se as vendas são retornadas em ordem decrescente por ID.
+     * Testa se as vendas são retornadas em ordem decrescente por ID com paginação.
      */
     public function test_sales_are_ordered_by_id_descending(): void
     {
@@ -31,11 +31,13 @@ class SaleServiceTest extends TestCase
         $sale2 = Sale::factory()->create(['seller_id' => $seller->id]);
         $sale3 = Sale::factory()->create(['seller_id' => $seller->id]);
 
-        $sales = $this->saleService->getAllSales();
+        $paginator = $this->saleService->getAllSales();
+        $sales = $paginator->items();
 
         $this->assertEquals($sale3->id, $sales[0]->id);
         $this->assertEquals($sale2->id, $sales[1]->id);
         $this->assertEquals($sale1->id, $sales[2]->id);
+        $this->assertEquals(3, $paginator->total());
     }
 
     /**
@@ -63,7 +65,7 @@ class SaleServiceTest extends TestCase
     }
 
     /**
-     * Testa se getSalesBySeller retorna apenas vendas do vendedor específico.
+     * Testa se getSalesBySeller retorna apenas vendas do vendedor específico com paginação.
      */
     public function test_get_sales_by_seller_returns_only_seller_sales(): void
     {
@@ -73,14 +75,17 @@ class SaleServiceTest extends TestCase
         Sale::factory()->count(3)->create(['seller_id' => $seller1->id]);
         Sale::factory()->count(2)->create(['seller_id' => $seller2->id]);
 
-        $salesSeller1 = $this->saleService->getSalesBySeller($seller1->id);
-        $salesSeller2 = $this->saleService->getSalesBySeller($seller2->id);
+        $paginatorSeller1 = $this->saleService->getSalesBySeller($seller1->id);
+        $paginatorSeller2 = $this->saleService->getSalesBySeller($seller2->id);
 
-        $this->assertCount(3, $salesSeller1);
-        $this->assertCount(2, $salesSeller2);
+        $this->assertEquals(3, $paginatorSeller1->total());
+        $this->assertEquals(2, $paginatorSeller2->total());
 
-        $salesSeller1->each(fn($sale) => $this->assertEquals($seller1->id, $sale->seller_id));
-        $salesSeller2->each(fn($sale) => $this->assertEquals($seller2->id, $sale->seller_id));
+        $salesSeller1 = $paginatorSeller1->items();
+        $salesSeller2 = $paginatorSeller2->items();
+
+        collect($salesSeller1)->each(fn($sale) => $this->assertEquals($seller1->id, $sale->seller_id));
+        collect($salesSeller2)->each(fn($sale) => $this->assertEquals($seller2->id, $sale->seller_id));
     }
 
     /**

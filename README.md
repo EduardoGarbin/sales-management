@@ -388,7 +388,7 @@ make setup
 
 ## Documentação Adicional
 
--   [Backend README](./backend/README-2.md) - Detalhes do Laravel
+-   [Backend README](./backend/README.md) - Detalhes do Laravel
 -   [Frontend README](./frontend/README.md) - Detalhes do Vue.js
 
 ---
