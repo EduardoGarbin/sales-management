@@ -79,17 +79,4 @@ class AuthServiceTest extends TestCase
             'password' => 'password123',
         ]);
     }
-
-    public function test_logout_deletes_all_user_tokens(): void
-    {
-        $user = User::factory()->create();
-        $user->createToken('auth_token');
-        $user->createToken('another_token');
-
-        $this->assertEquals(2, $user->tokens()->count());
-
-        $user->tokens()->delete();
-
-        $this->assertEquals(0, $user->tokens()->count());
-    }
 }

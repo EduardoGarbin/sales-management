@@ -71,10 +71,12 @@ class SellerControllerTest extends TestCase
     /**
      * Testa se cadastra um vendedor com sucesso.
      *
-     * Valida o fluxo completo de criação:
+     * Valida a resposta HTTP do endpoint:
      * - Status 201 (Created)
-     * - Vendedor salvo no banco
-     * - Resposta contém os dados corretos
+     * - Estrutura JSON correta
+     * - Dados retornados correspondem aos enviados
+     *
+     * Nota: Persistência em banco é validada no SellerServiceTest (Unit Test)
      */
     public function test_creates_seller_successfully(): void
     {
@@ -99,11 +101,6 @@ class SellerControllerTest extends TestCase
                 'name' => 'Eduardo Garbin',
                 'email' => 'eduardo@example.com',
             ]);
-
-        $this->assertDatabaseHas('sellers', [
-            'name' => 'Eduardo Garbin',
-            'email' => 'eduardo@example.com',
-        ]);
     }
 
     /**

@@ -67,6 +67,14 @@ class SaleControllerTest extends TestCase
 
     /**
      * Testa se cadastra uma venda com sucesso.
+     *
+     * Valida a resposta HTTP do endpoint:
+     * - Status 201 (Created)
+     * - Estrutura JSON correta
+     * - Cálculo de comissão na resposta
+     * - Dados retornados correspondem aos enviados
+     *
+     * Nota: Persistência em banco é validada no SaleServiceTest (Unit Test)
      */
     public function test_creates_sale_successfully(): void
     {
@@ -97,13 +105,6 @@ class SaleControllerTest extends TestCase
                 'commission' => '127.50', // 8.5% de 1500
                 'sale_date' => '2025-10-14',
             ]);
-
-        $this->assertDatabaseCount('sales', 1);
-
-        $sale = Sale::first();
-        $this->assertEquals($seller->id, $sale->seller_id);
-        $this->assertEquals(1500.00, $sale->amount);
-        $this->assertEquals('2025-10-14', $sale->sale_date->format('Y-m-d'));
     }
 
     /**
