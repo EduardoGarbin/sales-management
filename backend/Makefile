@@ -191,7 +191,6 @@ fix-permissions: ## Corrigir permissões dos arquivos
 setup: build up ## Setup completo do projeto
 	@echo "Instalando dependências..."
 	@$(MAKE) composer-install
-	@$(MAKE) npm-install
 	@echo "Configurando ambiente..."
 	@if [ ! -f .env ]; then \
 		echo "Criando arquivo .env..."; \
