@@ -9,6 +9,22 @@ help: ## Exibir ajuda com todos os comandos disponíveis
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
+# Verificação de permissões do Docker
+check-docker-permissions: ## Verificar se o usuário tem permissão para usar Docker
+	@docker ps > /dev/null 2>&1 || (echo ""; \
+		echo "ERRO: Sem permissão para acessar o Docker"; \
+		echo ""; \
+		echo "Para corrigir, execute os comandos abaixo:"; \
+		echo ""; \
+		echo "  sudo usermod -aG docker $$USER"; \
+		echo "  newgrp docker"; \
+		echo ""; \
+		echo "Ou faça logout e login novamente após o comando usermod."; \
+		echo ""; \
+		echo "Depois execute 'make setup' novamente."; \
+		echo ""; \
+		exit 1)
+
 # Comandos Docker Compose
 build: ## Construir as imagens Docker
 	docker compose -f compose.dev.yaml build
