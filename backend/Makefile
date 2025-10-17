@@ -27,21 +27,21 @@ check-docker-permissions: ## Verificar se o usuário tem permissão para usar Do
 
 # Comandos Docker Compose
 build: ## Construir as imagens Docker
-	docker compose -f compose.dev.yaml build
+	UID=$(shell id -u) GID=$(shell id -g) docker compose -f compose.dev.yaml build
 
 up: ## Iniciar os containers
-	docker compose -f compose.dev.yaml up -d
+	UID=$(shell id -u) GID=$(shell id -g) docker compose -f compose.dev.yaml up -d
 
 down: ## Parar os containers
-	docker compose -f compose.dev.yaml down
+	UID=$(shell id -u) GID=$(shell id -g) docker compose -f compose.dev.yaml down
 
 restart: down up ## Reiniciar os containers
 
 logs: ## Ver logs de todos os containers
-	docker compose -f compose.dev.yaml logs -f
+	UID=$(shell id -u) GID=$(shell id -g) docker compose -f compose.dev.yaml logs -f
 
 ps: ## Listar status dos containers
-	docker compose -f compose.dev.yaml ps
+	UID=$(shell id -u) GID=$(shell id -g) docker compose -f compose.dev.yaml ps
 
 # Acesso aos containers
 shell: ## Acessar shell do container workspace
@@ -192,7 +192,7 @@ test-feature: ## Executar apenas testes de feature
 
 # Limpeza e manutenção
 clean: ## Parar containers e remover volumes
-	docker compose -f compose.dev.yaml down -v
+	UID=$(shell id -u) GID=$(shell id -g) docker compose -f compose.dev.yaml down -v
 
 cache-clear: ## Limpar cache do Laravel
 	docker exec laravel-workspace php artisan cache:clear
