@@ -188,13 +188,13 @@ fix-permissions: ## Corrigir permissões dos arquivos
 	docker run --rm -v $(PWD):/app -w /app alpine:latest chown -R $(shell id -u):$(shell id -g) .
 
 # Setup inicial
-setup: build up ## Setup completo do projeto
+setup: check-docker-permissions build up ## Setup completo do projeto
 	@echo "Instalando dependências..."
 	@$(MAKE) composer-install
 	@echo "Configurando ambiente..."
 	@if [ ! -f .env ]; then \
 		echo "Criando arquivo .env..."; \
-		cp .env.example .env; \
+		docker exec laravel-workspace cp .env.example .env; \
 	else \
 		echo "Arquivo .env já existe, pulando..."; \
 	fi
