@@ -64,7 +64,8 @@
                     </div>
                     <div class="form-group">
                         <label>Valor:</label>
-                        <input v-model="form.amount" type="number" step="0.01" min="0.01" required />
+                        <input v-model="form.amount" type="number" step="0.01" min="0.01" max="99999999.99" required />
+                        <small class="field-hint">Valor máximo: R$ 99.999.999,99</small>
                     </div>
                     <div class="form-group">
                         <label>Data:</label>
@@ -333,6 +334,14 @@ onMounted(() => {
     border: 1px solid #f5c6cb;
     border-radius: 4px;
     margin: 1rem 0;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 0.3rem;
+    color: #666;
+    font-size: 0.85rem;
+    font-style: italic;
 }
 
 /* Loading Spinner */
