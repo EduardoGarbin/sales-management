@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ResendCommissionEmailRequest;
 use App\Http\Requests\StoreSellerRequest;
+use App\Http\Resources\CommissionReportResource;
 use App\Http\Resources\SellerResource;
-use App\Jobs\SendDailySalesReportEmail;
-use App\Models\Seller;
 use App\Services\SellerService;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -66,7 +64,9 @@ class SellerController extends Controller
      * Reenvia o e-mail de comissão para um vendedor específico.
      *
      * Permite que o administrador reenvie o relatório de comissões
-     * de um vendedor para uma data específica.
+     * de um vendedor para uma data específica. A lógica de negócio
+     * (busca de dados, cálculos e dispatch do job) é delegada ao SellerService.
+     * A formatação da resposta é delegada ao CommissionReportResource.
      *
      * @param ResendCommissionEmailRequest $request
      * @param int $id
@@ -74,41 +74,16 @@ class SellerController extends Controller
      */
     public function resendCommissionEmail(ResendCommissionEmailRequest $request, int $id): JsonResponse
     {
-        $seller = Seller::findOrFail($id);
-
-        $date = Carbon::parse($request->validated('date'));
-
-        $sales = $seller->sales()
-            ->whereDate('sale_date', $date)
-            ->get();
-
-        $salesCount = $sales->count();
-        $totalAmount = $sales->sum('amount');
-        $totalCommission = $sales->sum(function ($sale) {
-            return $sale->amount * ($sale->seller->commission_rate / 100);
-        });
-
-        SendDailySalesReportEmail::dispatch(
-            $seller,
-            $date->format('d/m/Y'),
-            $salesCount,
-            (float) $totalAmount,
-            (float) $totalCommission
+        // Delega toda a lógica de negócio para o service
+        $result = $this->sellerService->resendCommissionEmail(
+            $id,
+            $request->validated('date')
         );
 
-        return response()->json([
-            'message' => 'E-mail de comissão reenviado com sucesso',
-            'data' => [
-                'seller' => [
-                    'id' => $seller->id,
-                    'name' => $seller->name,
-                    'email' => $seller->email,
-                ],
-                'date' => $date->format('d/m/Y'),
-                'sales_count' => $salesCount,
-                'total_amount' => $totalAmount,
-                'total_commission' => $totalCommission,
-            ]
-        ], 200);
+        // Usa o Resource para formatar a resposta e adiciona mensagem de sucesso
+        return (new CommissionReportResource($result))
+            ->additional(['message' => 'E-mail de comissão reenviado com sucesso'])
+            ->response()
+            ->setStatusCode(200);
     }
 }
