@@ -18,7 +18,8 @@ class AuthServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->authService = new AuthService();
+        // Resolve o AuthService com suas dependências injetadas automaticamente
+        $this->authService = app(AuthService::class);
     }
 
     public function test_register_creates_user_and_returns_token(): void
