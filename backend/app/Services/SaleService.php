@@ -3,12 +3,35 @@
 namespace App\Services;
 
 use App\Models\Sale;
-use App\Models\Seller;
+use App\Repositories\Contracts\SaleRepositoryInterface;
+use App\Repositories\Contracts\SellerRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class SaleService
 {
+    /**
+     * Repositórios injetados via dependency injection.
+     *
+     * @var SaleRepositoryInterface
+     * @var SellerRepositoryInterface
+     */
+    private SaleRepositoryInterface $saleRepository;
+    private SellerRepositoryInterface $sellerRepository;
+
+    /**
+     * Construtor do serviço.
+     *
+     * @param SaleRepositoryInterface $saleRepository
+     * @param SellerRepositoryInterface $sellerRepository
+     */
+    public function __construct(
+        SaleRepositoryInterface $saleRepository,
+        SellerRepositoryInterface $sellerRepository
+    ) {
+        $this->saleRepository = $saleRepository;
+        $this->sellerRepository = $sellerRepository;
+    }
     /**
      * Lista todas as vendas ordenadas de forma decrescente com paginação.
      *
@@ -20,9 +43,7 @@ class SaleService
      */
     public function getAllSales(int $perPage = 15): LengthAwarePaginator
     {
-        return Sale::with('seller')
-            ->orderBy('id', 'desc')
-            ->paginate($perPage);
+        return $this->saleRepository->getAllPaginatedWithSeller($perPage);
     }
 
     /**
@@ -37,15 +58,15 @@ class SaleService
      */
     public function createSale(array $data): Sale
     {
-        Seller::findOrFail($data['seller_id']);
+        // Valida se o vendedor existe
+        $this->sellerRepository->findOrFail($data['seller_id']);
 
-        $sale = Sale::create([
+        // Cria a venda através do repository
+        return $this->saleRepository->createWithSeller([
             'seller_id' => $data['seller_id'],
             'amount' => $data['amount'],
             'sale_date' => $data['sale_date'],
         ]);
-
-        return $sale->load('seller');
     }
 
     /**
@@ -57,9 +78,6 @@ class SaleService
      */
     public function getSalesBySeller(int $sellerId, int $perPage = 15): LengthAwarePaginator
     {
-        return Sale::with('seller')
-            ->where('seller_id', $sellerId)
-            ->orderBy('sale_date', 'desc')
-            ->paginate($perPage);
+        return $this->saleRepository->getBySeller($sellerId, $perPage);
     }
 }
