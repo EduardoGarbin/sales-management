@@ -3,13 +3,16 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSellerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
-     * Como não há autenticação implementada, sempre autoriza.
+     * A autenticação é tratada pelo middleware auth:sanctum nas rotas.
+     * Este método sempre retorna true pois a autorização específica
+     * não é necessária nesta request (qualquer usuário autenticado pode criar vendedores).
      */
     public function authorize(): bool
     {
@@ -21,7 +24,7 @@ class StoreSellerRequest extends FormRequest
      *
      * Regras de validação para cadastro de vendedor:
      * - name: obrigatório, string, máximo 255 caracteres
-     * - email: obrigatório, formato de email válido, único na tabela sellers
+     * - email: obrigatório, formato de email válido, único na tabela sellers (ignora soft deleted)
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
@@ -29,7 +32,7 @@ class StoreSellerRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:sellers,email'],
+            'email' => ['required', 'email', Rule::unique('sellers')->whereNull('deleted_at')],
         ];
     }
 

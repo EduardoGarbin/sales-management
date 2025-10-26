@@ -20,9 +20,9 @@ class SellerRepository extends BaseRepository implements SellerRepositoryInterfa
     /**
      * {@inheritDoc}
      */
-    protected function getModel(): Model
+    protected function getModel(): string
     {
-        return new Seller();
+        return Seller::class;
     }
 
     /**
@@ -54,6 +54,7 @@ class SellerRepository extends BaseRepository implements SellerRepositoryInterfa
         $parsedDate = Carbon::parse($date);
 
         return $seller->sales()
+            ->with('seller')
             ->whereDate('sale_date', $parsedDate)
             ->get();
     }

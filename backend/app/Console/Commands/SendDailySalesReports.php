@@ -46,6 +46,7 @@ class SendDailySalesReports extends Command
 
         foreach ($sellers as $seller) {
             $sales = $seller->sales()
+                ->with('seller')
                 ->whereDate('sale_date', $date)
                 ->get();
 

@@ -25,23 +25,25 @@ abstract class BaseRepository implements BaseRepositoryInterface
     /**
      * Construtor do repositório.
      *
-     * Instancia o model através do método abstrato getModel(),
-     * que deve ser implementado pelas classes filhas.
+     * Resolve o model através do método abstrato getModel(),
+     * que deve retornar a classe do model (string FQCN).
+     * O Laravel Service Container instancia o model automaticamente.
      */
     public function __construct()
     {
-        $this->model = $this->getModel();
+        $this->model = app($this->getModel());
     }
 
     /**
-     * Retorna a instância do Model Eloquent.
+     * Retorna o nome completo da classe do Model (FQCN).
      *
      * Este método deve ser implementado pelas classes filhas
-     * para retornar o model específico do repositório.
+     * para retornar a classe do model específico do repositório.
+     * Exemplo: return Seller::class;
      *
-     * @return Model
+     * @return string
      */
-    abstract protected function getModel(): Model;
+    abstract protected function getModel(): string;
 
     /**
      * {@inheritDoc}

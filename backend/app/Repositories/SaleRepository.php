@@ -20,9 +20,9 @@ class SaleRepository extends BaseRepository implements SaleRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    protected function getModel(): Model
+    protected function getModel(): string
     {
-        return new Sale();
+        return Sale::class;
     }
 
     /**

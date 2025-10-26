@@ -60,14 +60,21 @@ class SaleController extends Controller
     /**
      * Lista vendas de um vendedor específico com paginação.
      *
+     * Valida se o vendedor existe antes de buscar suas vendas.
+     * Se não existir, retorna 404 Not Found (conforme convenção REST).
+     *
      * @param Request $request
      * @param int $sellerId
      * @return AnonymousResourceCollection
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function salesBySeller(Request $request, int $sellerId): AnonymousResourceCollection
     {
         $perPage = $request->query('per_page', 15);
+
+        // Valida se o seller existe, lança 404 se não encontrado
         $sales = $this->saleService->getSalesBySeller($sellerId, $perPage);
+
         return SaleResource::collection($sales);
     }
 }

@@ -18,9 +18,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    protected function getModel(): Model
+    protected function getModel(): string
     {
-        return new User();
+        return User::class;
     }
 
     /**

@@ -9,7 +9,9 @@ class StoreSaleRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * Como não há autenticação implementada, sempre autoriza.
+     * A autenticação é tratada pelo middleware auth:sanctum nas rotas.
+     * Este método sempre retorna true pois a autorização específica
+     * não é necessária nesta request (qualquer usuário autenticado pode criar vendas).
      */
     public function authorize(): bool
     {

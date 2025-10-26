@@ -28,6 +28,12 @@ class SellerService
         $this->sellerRepository = $sellerRepository;
     }
     /**
+     * Tag do cache para vendedores.
+     * Usar tags permite limpar todo o cache relacionado de uma vez.
+     */
+    private const SELLERS_CACHE_TAG = 'sellers';
+
+    /**
      * Prefixo da chave do cache para a lista de vendedores.
      */
     private const SELLERS_CACHE_PREFIX = 'sellers_list';
@@ -43,6 +49,7 @@ class SellerService
      * Este método retorna todos os vendedores que não foram deletados (soft delete),
      * ordenados do mais recente para o mais antigo (ID decrescente).
      * Cada página é armazenada em cache separadamente por 60 minutos para melhorar a performance.
+     * Usa tags do Redis para permitir invalidação eficiente do cache.
      *
      * @param int $page Número da página (padrão: 1)
      * @param int $perPage Número de itens por página (padrão: 15)
@@ -52,7 +59,7 @@ class SellerService
     {
         $cacheKey = $this->getCacheKey($page, $perPage);
 
-        return Cache::remember(
+        return Cache::tags([self::SELLERS_CACHE_TAG])->remember(
             $cacheKey,
             now()->addMinutes(self::CACHE_TTL),
             fn() => $this->sellerRepository->getAllPaginated($page, $perPage)
@@ -94,24 +101,15 @@ class SellerService
      *
      * Este método deve ser chamado sempre que houver alterações
      * nos vendedores (criação, atualização ou exclusão).
-     * Limpa as páginas mais comuns do cache (primeiras 10 páginas com tamanhos padrão).
+     * Usa tags do Redis para limpar todo o cache relacionado a vendedores
+     * de uma só vez, independente de paginação ou parâmetros.
      *
      * @return void
      */
     public function clearCache(): void
     {
-        // Limpa as páginas mais comuns do cache
-        $commonPageSizes = [10, 15, 20, 25, 50];
-        $maxPages = 10;
-
-        foreach ($commonPageSizes as $perPage) {
-            for ($page = 1; $page <= $maxPages; $page++) {
-                Cache::forget($this->getCacheKey($page, $perPage));
-            }
-        }
-
-        // Também limpa possíveis caches antigos com a chave antiga
-        Cache::forget(self::SELLERS_CACHE_PREFIX);
+        // Limpa todo o cache taggeado com 'sellers' (todas páginas, todos tamanhos)
+        Cache::tags([self::SELLERS_CACHE_TAG])->flush();
     }
 
     /**

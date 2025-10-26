@@ -72,12 +72,18 @@ class SaleService
     /**
      * Lista vendas de um vendedor específico com paginação.
      *
+     * Valida se o vendedor existe antes de buscar suas vendas.
+     *
      * @param int $sellerId
      * @param int $perPage Número de itens por página (padrão: 15)
      * @return LengthAwarePaginator
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function getSalesBySeller(int $sellerId, int $perPage = 15): LengthAwarePaginator
     {
+        // Valida se o vendedor existe (lança ModelNotFoundException se não existir)
+        $this->sellerRepository->findOrFail($sellerId);
+
         return $this->saleRepository->getBySeller($sellerId, $perPage);
     }
 }

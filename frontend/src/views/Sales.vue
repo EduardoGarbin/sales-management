@@ -69,7 +69,8 @@
                     </div>
                     <div class="form-group">
                         <label>Data:</label>
-                        <input v-model="form.sale_date" type="date" required />
+                        <input v-model="form.sale_date" type="date" :max="maxDate" required />
+                        <small class="field-hint">A data não pode ser no futuro</small>
                     </div>
 
                     <div class="error" v-if="error">{{ error }}</div>
@@ -87,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import type { Sale, Seller, PaginationMeta } from '@/types'
@@ -114,6 +115,12 @@ const paginationMeta = ref<PaginationMeta>({
 
 // Modal de criação
 const showCreateModal = ref(false)
+
+// Data máxima (hoje) para validação do campo de data
+const maxDate = computed(() => {
+    const date = new Date()
+    return date.toISOString().split('T')[0]
+})
 
 async function loadSales(page: number = currentPage.value) {
     loadingList.value = true
@@ -181,7 +188,10 @@ async function handleCreate() {
 }
 
 function formatDate(date: string) {
-    return new Date(date).toLocaleDateString('pt-BR')
+    // Parse manual para evitar problemas de timezone
+    // Date string vem como 'YYYY-MM-DD' do backend
+    const [year, month, day] = date.split('-')
+    return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString('pt-BR')
 }
 
 onMounted(() => {
