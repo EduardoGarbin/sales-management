@@ -44,11 +44,20 @@ Sistema web desenvolvido para gerenciar vendedores, vendas e cálculo automátic
 
 -   **Laravel 12** (PHP 8.3)
 -   **MySQL 8.0** - Banco de dados relacional
--   **Redis 7** - Sistema de cache
--   **Laravel Sanctum** - Autenticação API
+-   **Redis 7** - Sistema de cache para paginação
+-   **Laravel Sanctum** - Autenticação API via tokens
 -   **Laravel Queue** - Processamento assíncrono de emails
 -   **Mailpit** - Servidor SMTP para desenvolvimento
--   **PHPUnit 11** - Testes automatizados (55 testes, 212 asserções)
+-   **PHPUnit 11** - Testes automatizados (95 testes, 368 asserções)
+-   **Repository Pattern** - Camada de abstração de dados
+    -   Interfaces para cada Repository (Contracts)
+    -   BaseRepository para operações CRUD comuns
+    -   Binding via RepositoryServiceProvider
+    -   Facilita testes e mantém Services independentes da persistência
+-   **Service Layer** - Lógica de negócio separada dos controllers
+    -   Validações de regras de negócio
+    -   Orquestração de operações complexas
+    -   Gerenciamento de cache e invalidação
 
 ### Frontend
 
@@ -250,19 +259,29 @@ make help
 
 ## Testes Automatizados
 
-O projeto possui **55 testes com 212 asserções** cobrindo:
+O projeto possui **95 testes com 368 asserções** cobrindo:
 
-### Feature Tests
+### Feature Tests (40 testes)
 
 -   Controllers (Sellers, Sales, Auth)
 -   Envio de emails
 -   Comandos de console
 
-### Unit Tests
+### Unit Tests (55 testes)
 
--   Services (SellerService, SaleService, AuthService)
--   Resources (transformação de dados)
--   Jobs (processamento de emails)
+-   **Repositories** - Testes de persistência e queries
+    -   SellerRepository (8 testes)
+    -   SaleRepository (9 testes)
+    -   UserRepository (8 testes)
+-   **Services** - Testes de lógica de negócio
+    -   SellerService (5 testes)
+    -   SaleService (7 testes)
+    -   AuthService (6 testes)
+-   **Resources** - Testes de transformação de dados
+    -   SellerResource (5 testes)
+    -   SaleResource (5 testes)
+    -   CommissionReportResource (7 testes)
+-   **Jobs** - Processamento assíncrono (5 testes)
 
 Executar testes:
 
@@ -309,6 +328,12 @@ sales-management/
 │   │   ├── Jobs/              # Jobs assíncronos
 │   │   ├── Mail/              # Templates de email
 │   │   ├── Models/            # Models Eloquent
+│   │   ├── Repositories/      # Camada de acesso a dados
+│   │   │   ├── Contracts/     # Interfaces dos Repositories
+│   │   │   ├── BaseRepository.php
+│   │   │   ├── SellerRepository.php
+│   │   │   ├── SaleRepository.php
+│   │   │   └── UserRepository.php
 │   │   └── Services/          # Lógica de negócio
 │   ├── database/
 │   │   ├── migrations/        # Migrations do banco
@@ -316,6 +341,8 @@ sales-management/
 │   ├── resources/views/       # Templates de email
 │   ├── routes/                # Definição de rotas
 │   ├── tests/                 # Testes automatizados
+│   │   ├── Feature/           # Testes de integração
+│   │   └── Unit/              # Testes unitários
 │   ├── compose.dev.yaml       # Docker Compose
 │   └── Makefile               # Automação de comandos
 │

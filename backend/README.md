@@ -146,6 +146,13 @@ backend/
 │   ├── Jobs/              # Jobs assíncronos
 │   ├── Mail/              # Mailable classes
 │   ├── Models/            # Models Eloquent
+│   ├── Providers/         # Service Providers
+│   ├── Repositories/      # Camada de acesso a dados
+│   │   ├── Contracts/     # Interfaces dos Repositories
+│   │   ├── BaseRepository.php
+│   │   ├── SellerRepository.php
+│   │   ├── SaleRepository.php
+│   │   └── UserRepository.php
 │   └── Services/          # Lógica de negócio
 ├── database/
 │   ├── migrations/        # Migrations do banco
@@ -183,7 +190,16 @@ php artisan schedule:list
 
 ## Testes Automatizados
 
-O projeto possui **55 testes com 212 asserções**.
+O projeto possui **95 testes com 368 asserções**.
+
+### Cobertura de Testes
+
+-   **Feature Tests (40 testes)** - Testes de integração com Controllers, Jobs e Commands
+-   **Unit Tests (55 testes)**
+    -   Repositories (25 testes) - Persistência e queries
+    -   Services (18 testes) - Lógica de negócio
+    -   Resources (17 testes) - Transformação de dados
+    -   Jobs (5 testes) - Processamento assíncrono
 
 Executar todos os testes:
 
