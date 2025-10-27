@@ -40,11 +40,11 @@ class SellerServiceTest extends TestCase
 
         // Primeira chamada - deve criar o cache
         $this->sellerService->getAllSellers(1, 15);
-        $this->assertTrue(Cache::has('sellers_list_page_1_per_15'));
+        $this->assertTrue(Cache::tags(['sellers'])->has('sellers_list_page_1_per_15'));
 
         // Segunda chamada - deve usar cache
         $this->sellerService->getAllSellers(1, 15);
-        $this->assertTrue(Cache::has('sellers_list_page_1_per_15'));
+        $this->assertTrue(Cache::tags(['sellers'])->has('sellers_list_page_1_per_15'));
     }
 
     /**
@@ -59,17 +59,17 @@ class SellerServiceTest extends TestCase
         $this->sellerService->getAllSellers(2, 15);
         $this->sellerService->getAllSellers(1, 10);
 
-        $this->assertTrue(Cache::has('sellers_list_page_1_per_15'));
-        $this->assertTrue(Cache::has('sellers_list_page_2_per_15'));
-        $this->assertTrue(Cache::has('sellers_list_page_1_per_10'));
+        $this->assertTrue(Cache::tags(['sellers'])->has('sellers_list_page_1_per_15'));
+        $this->assertTrue(Cache::tags(['sellers'])->has('sellers_list_page_2_per_15'));
+        $this->assertTrue(Cache::tags(['sellers'])->has('sellers_list_page_1_per_10'));
 
         // Limpa o cache
         $this->sellerService->clearCache();
 
         // Todos os caches devem ter sido limpos
-        $this->assertFalse(Cache::has('sellers_list_page_1_per_15'));
-        $this->assertFalse(Cache::has('sellers_list_page_2_per_15'));
-        $this->assertFalse(Cache::has('sellers_list_page_1_per_10'));
+        $this->assertFalse(Cache::tags(['sellers'])->has('sellers_list_page_1_per_15'));
+        $this->assertFalse(Cache::tags(['sellers'])->has('sellers_list_page_2_per_15'));
+        $this->assertFalse(Cache::tags(['sellers'])->has('sellers_list_page_1_per_10'));
     }
 
     /**
@@ -110,7 +110,7 @@ class SellerServiceTest extends TestCase
     {
         // Cria cache inicial
         $this->sellerService->getAllSellers(1, 15);
-        $this->assertTrue(Cache::has('sellers_list_page_1_per_15'));
+        $this->assertTrue(Cache::tags(['sellers'])->has('sellers_list_page_1_per_15'));
 
         // Cria vendedor (deve invalidar cache)
         $this->sellerService->createSeller([
@@ -119,7 +119,7 @@ class SellerServiceTest extends TestCase
         ]);
 
         // Cache deve ter sido invalidado
-        $this->assertFalse(Cache::has('sellers_list_page_1_per_15'));
+        $this->assertFalse(Cache::tags(['sellers'])->has('sellers_list_page_1_per_15'));
     }
 
     /**

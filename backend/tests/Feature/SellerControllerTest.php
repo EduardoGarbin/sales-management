@@ -11,6 +11,13 @@ class SellerControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Limpa o cache antes de cada teste para evitar dados residuais
+        \Illuminate\Support\Facades\Cache::flush();
+    }
+
     private function actingAsUser()
     {
         $user = User::factory()->create();
